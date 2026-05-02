@@ -1,0 +1,5 @@
+node_modules/
+data/applications.json
+data/uploads/
+server.log
+server.err

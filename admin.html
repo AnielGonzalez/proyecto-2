@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dealer Panel</title>
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section id="login-view" class="login-card" aria-labelledby="login-title">
+        <img src="assets/vende-to-cropped.png" alt="Logo Vende To">
+        <p class="eyebrow">Acceso privado</p>
+        <h1 id="login-title">Dealer Panel</h1>
+        <form id="login-form">
+          <label for="username">Usuario</label>
+          <input id="username" name="username" type="text" autocomplete="username" required>
+
+          <label for="password">Contrasena</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+          <button type="submit">Entrar</button>
+          <output id="login-message" aria-live="polite"></output>
+        </form>
+      </section>
+
+      <section id="panel-view" class="panel-view hidden" aria-labelledby="panel-title">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">Solicitudes</p>
+            <h1 id="panel-title">Financiamiento</h1>
+          </div>
+          <button id="logout-button" type="button">Salir</button>
+        </header>
+
+        <div class="workspace">
+          <section class="table-card" aria-label="Solicitudes recibidas">
+            <div class="table-toolbar">
+              <strong id="application-count">0 registros</strong>
+              <button id="refresh-button" type="button">Actualizar</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Cedula</th>
+                    <th>Telefono</th>
+                    <th>Inicial</th>
+                    <th>Provincia</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="applications-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="detail-panel" aria-labelledby="detail-title">
+            <h2 id="detail-title">Detalle del cliente</h2>
+            <div id="detail-content" class="empty-state">Selecciona un registro para ver la informacion completa.</div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

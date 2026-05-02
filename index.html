@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro de usuario</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="brand-strip" aria-label="Logos de la marca">
+          <img src="assets/vende-to-cropped.png" alt="Logo Vende To">
+        </div>
+        <p class="eyebrow">Formulario de financiamiento</p>
+        <h1 id="page-title">Información del usuario</h1>
+        <p>
+          Captura datos personales, inicial y ubicación en un
+          formulario claro, validado y listo para usar.
+        </p>
+      </section>
+
+      <section class="form-panel" aria-label="Formulario de informacion del usuario">
+        <form id="user-form" autocomplete="off" enctype="multipart/form-data" novalidate>
+          <div class="field-group full">
+            <label for="fullName">Nombre completo</label>
+            <input
+              id="fullName"
+              name="fullName"
+              type="text"
+              autocomplete="name"
+              placeholder="Ej. Ana Maria Perez"
+              minlength="3"
+              required
+            >
+            <span class="error" id="fullName-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="cedula">Cedula</label>
+            <input
+              id="cedula"
+              name="cedula"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="000-0000000-0"
+              pattern="^\d{3}-?\d{7}-?\d{1}$"
+              required
+            >
+            <span class="error" id="cedula-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="phone">Número telefonico</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="809-000-0000"
+              pattern="^\d{3}-?\d{3}-?\d{4}$"
+              required
+            >
+            <span class="error" id="phone-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group full">
+            <label for="jobName">Nombre de su trabajo</label>
+            <input
+              id="jobName"
+              name="jobName"
+              type="text"
+              autocomplete="organization-title"
+              minlength="2"
+            >
+            <span class="error" id="jobName-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="initialAmount">Inicial</label>
+            <input
+              id="initialAmount"
+              name="initialAmount"
+              type="number"
+              inputmode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="Ej. RD$50,000"
+              required
+            >
+            <span class="error" id="initialAmount-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="province">Provincia</label>
+            <select id="province" name="province">
+              <option value="">Selecciona una provincia</option>
+              <option>Azua</option>
+              <option>Baoruco</option>
+              <option>Barahona</option>
+              <option>Dajabon</option>
+              <option>Distrito Nacional</option>
+              <option>Duarte</option>
+              <option>El Seibo</option>
+              <option>Elias Pina</option>
+              <option>Espaillat</option>
+              <option>Hato Mayor</option>
+              <option>Hermanas Mirabal</option>
+              <option>Independencia</option>
+              <option>La Altagracia</option>
+              <option>La Romana</option>
+              <option>La Vega</option>
+              <option>Maria Trinidad Sanchez</option>
+              <option>Monsenor Nouel</option>
+              <option>Monte Cristi</option>
+              <option>Monte Plata</option>
+              <option>Pedernales</option>
+              <option>Peravia</option>
+              <option>Puerto Plata</option>
+              <option>Samana</option>
+              <option>San Cristobal</option>
+              <option>San Jose de Ocoa</option>
+              <option>San Juan</option>
+              <option>San Pedro de Macoris</option>
+              <option>Sanchez Ramirez</option>
+              <option>Santiago</option>
+              <option>Santiago Rodriguez</option>
+              <option>Santo Domingo</option>
+              <option>Valverde</option>
+            </select>
+            <span class="error" id="province-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group full">
+            <label for="address">Direccion</label>
+            <textarea
+              id="address"
+              name="address"
+              rows="4"
+              autocomplete="street-address"
+              placeholder="Calle, numero, sector y referencias"
+              minlength="8"
+            ></textarea>
+            <span class="error" id="address-error" aria-live="polite"></span>
+          </div>
+
+          <div class="field-group full">
+            <label for="cedulaPhoto">Foto de la cedula</label>
+            <input
+              id="cedulaPhoto"
+              name="cedulaPhoto"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/heic,image/heif"
+            >
+            <span class="hint">Acepta PNG, JPG, WEBP o HEIC.</span>
+            <span class="error" id="cedulaPhoto-error" aria-live="polite"></span>
+          </div>
+
+          <div class="actions full">
+            <button type="reset" class="secondary">Limpiar</button>
+            <button type="submit">Guardar informacion</button>
+          </div>
+
+          <output id="form-result" class="result full" aria-live="polite"></output>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

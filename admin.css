@@ -22,7 +22,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -82,14 +83,17 @@ label {
   font-weight: 760;
 }
 
-input {
+input,
+select {
   min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 10px 12px;
+  background: #ffffff;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: var(--accent);
   outline: none;
   box-shadow: 0 0 0 3px rgba(255, 11, 11, 0.18);
@@ -161,6 +165,33 @@ output {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-box,
+.status-filter {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.search-box input {
+  width: min(280px, 56vw);
+}
+
+.status-filter select {
+  min-width: 150px;
 }
 
 .table-wrap {
@@ -170,7 +201,7 @@ output {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
+  min-width: 820px;
 }
 
 th,
@@ -195,6 +226,31 @@ tbody tr {
 tbody tr:hover,
 tbody tr.selected {
   background: rgba(255, 11, 11, 0.06);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.status-pill.pendiente {
+  background: #eeeeee;
+  color: #3f3f46;
+}
+
+.status-pill.aprobado {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.rechazado {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .detail-panel {
@@ -230,6 +286,11 @@ tbody tr.selected {
   display: block;
   margin-top: 3px;
   overflow-wrap: anywhere;
+}
+
+.status-select {
+  width: 100%;
+  margin-top: 6px;
 }
 
 .cedula-photo {

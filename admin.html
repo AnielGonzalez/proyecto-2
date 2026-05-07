@@ -37,7 +37,22 @@
           <section class="table-card" aria-label="Solicitudes recibidas">
             <div class="table-toolbar">
               <strong id="application-count">0 registros</strong>
-              <button id="refresh-button" type="button">Actualizar</button>
+              <div class="toolbar-actions">
+                <label class="search-box" for="search-input">
+                  <span>Buscar</span>
+                  <input id="search-input" type="search" placeholder="Nombre, cedula o telefono">
+                </label>
+                <label class="status-filter" for="status-filter">
+                  <span>Status</span>
+                  <select id="status-filter">
+                    <option value="">Todos</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="aprobado">Aprobado</option>
+                    <option value="rechazado">Rechazado</option>
+                  </select>
+                </label>
+                <button id="refresh-button" type="button">Actualizar</button>
+              </div>
             </div>
             <div class="table-wrap">
               <table>
@@ -48,6 +63,7 @@
                     <th>Telefono</th>
                     <th>Inicial</th>
                     <th>Provincia</th>
+                    <th>Status</th>
                     <th>Fecha</th>
                   </tr>
                 </thead>

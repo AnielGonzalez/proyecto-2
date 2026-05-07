@@ -5,9 +5,12 @@
   const loginMessage = document.querySelector("#login-message");
   const logoutButton = document.querySelector("#logout-button");
   const refreshButton = document.querySelector("#refresh-button");
+  const searchInput = document.querySelector("#search-input");
+  const statusFilter = document.querySelector("#status-filter");
   const applicationCount = document.querySelector("#application-count");
   const applicationsBody = document.querySelector("#applications-body");
   const detailContent = document.querySelector("#detail-content");
+  let selectedApplicationId = "";
 
   function formatDate(value) {
     return new Intl.DateTimeFormat("es-DO", {
@@ -21,6 +24,19 @@
       style: "currency",
       currency: "DOP"
     }).format(Number(value || 0));
+  }
+
+  function statusLabel(value) {
+    const labels = {
+      pendiente: "Pendiente",
+      aprobado: "Aprobado",
+      rechazado: "Rechazado"
+    };
+    return labels[value] || labels.pendiente;
+  }
+
+  function statusClass(value) {
+    return `status-pill ${value || "pendiente"}`;
   }
 
   async function api(path, options = {}) {
@@ -64,9 +80,11 @@
         <td>${item.phone || ""}</td>
         <td>${money(item.initialAmount)}</td>
         <td>${item.province || ""}</td>
+        <td><span class="${statusClass(item.status)}">${statusLabel(item.status)}</span></td>
         <td>${formatDate(item.createdAt)}</td>
       `;
       row.addEventListener("click", () => {
+        selectedApplicationId = item.id;
         document.querySelectorAll("tbody tr").forEach((current) => current.classList.remove("selected"));
         row.classList.add("selected");
         loadDetail(item.id);
@@ -84,9 +102,34 @@
     `;
   }
 
+  function currentListUrl() {
+    const params = new URLSearchParams();
+    const search = searchInput.value.trim();
+    const status = statusFilter.value;
+
+    if (search) {
+      params.set("search", search);
+    }
+    if (status) {
+      params.set("status", status);
+    }
+
+    const query = params.toString();
+    return `/api/admin/applications${query ? `?${query}` : ""}`;
+  }
+
   async function loadApplications() {
-    const applications = await api("/api/admin/applications");
+    const applications = await api(currentListUrl());
     renderApplications(applications);
+  }
+
+  async function updateStatus(id, status) {
+    await api(`/api/admin/applications/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status })
+    });
+    await loadApplications();
+    await loadDetail(id);
   }
 
   async function loadDetail(id) {
@@ -98,6 +141,14 @@
         ${detailItem("Cedula", item.cedula)}
         ${detailItem("Telefono", item.phone)}
         ${detailItem("Inicial", money(item.initialAmount))}
+        <div class="detail-item">
+          <label class="detail-label" for="status-select">Status</label>
+          <select id="status-select" class="status-select">
+            <option value="pendiente" ${item.status === "pendiente" ? "selected" : ""}>Pendiente</option>
+            <option value="aprobado" ${item.status === "aprobado" ? "selected" : ""}>Aprobado</option>
+            <option value="rechazado" ${item.status === "rechazado" ? "selected" : ""}>Rechazado</option>
+          </select>
+        </div>
         ${detailItem("Trabajo", item.jobName)}
         ${detailItem("Provincia", item.province)}
         ${detailItem("Direccion", item.address)}
@@ -109,6 +160,12 @@
         }
       </div>
     `;
+
+    document.querySelector("#status-select").addEventListener("change", (event) => {
+      updateStatus(item.id, event.target.value).catch((error) => {
+        detailContent.innerHTML = `<div class="empty-state">${error.message}</div>`;
+      });
+    });
   }
 
   loginForm.addEventListener("submit", async (event) => {
@@ -139,6 +196,22 @@
 
   refreshButton.addEventListener("click", () => {
     loadApplications().catch((error) => showLogin(error.message));
+  });
+
+  searchInput.addEventListener("input", () => {
+    window.clearTimeout(searchInput.searchTimer);
+    searchInput.searchTimer = window.setTimeout(() => {
+      loadApplications().catch((error) => showLogin(error.message));
+    }, 250);
+  });
+
+  statusFilter.addEventListener("change", () => {
+    loadApplications().catch((error) => showLogin(error.message));
+    if (selectedApplicationId) {
+      detailContent.classList.add("empty-state");
+      detailContent.textContent = "Selecciona un registro para ver la informacion completa.";
+      selectedApplicationId = "";
+    }
   });
 
   api("/api/admin/me")

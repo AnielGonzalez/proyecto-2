@@ -77,6 +77,8 @@ test("incluye servidor para guardar solicitudes y fotos", () => {
   assert.match(server, /DATABASE_URL/);
   assert.match(server, /CREATE TABLE IF NOT EXISTS applications/);
   assert.match(server, /CREATE TABLE IF NOT EXISTS cedula_photos/);
+  assert.match(server, /status TEXT NOT NULL DEFAULT 'pendiente'/);
+  assert.match(server, /applications_status_check/);
   assert.match(server, /BYTEA NOT NULL/);
   assert.match(server, /REFERENCES applications\(id\) ON DELETE CASCADE/);
   assert.match(server, /validateApplication\(fields\)/);
@@ -95,13 +97,26 @@ test("incluye panel privado del dealer", () => {
   assert.match(server, /\/api\/admin\/applications/);
   assert.match(server, /handleAdminApplicationDetail/);
   assert.match(server, /handleAdminApplicationPhoto/);
+  assert.match(server, /handleAdminApplicationStatus/);
+  assert.match(server, /searchParams\.get\("search"\)/);
+  assert.match(server, /searchParams\.get\("status"\)/);
+  assert.match(server, /ILIKE/);
+  assert.match(server, /PATCH/);
   assert.match(adminHtml, /id="login-view"/);
   assert.match(adminHtml, /id="panel-view"/);
   assert.match(adminHtml, /id="applications-body"/);
+  assert.match(adminHtml, /id="search-input"/);
+  assert.match(adminHtml, /id="status-filter"/);
+  assert.match(adminHtml, /Aprobado/);
+  assert.match(adminHtml, /Rechazado/);
   assert.match(adminJs, /\/api\/admin\/login/);
   assert.match(adminJs, /\/api\/admin\/applications/);
+  assert.match(adminJs, /currentListUrl/);
+  assert.match(adminJs, /updateStatus/);
+  assert.match(adminJs, /status-select/);
   assert.match(adminJs, /credentials: "include"/);
   assert.match(adminCss, /table/);
+  assert.match(adminCss, /status-pill/);
 });
 
 test("la pagina es responsiva y visualmente accesible", () => {

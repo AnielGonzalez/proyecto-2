@@ -54,6 +54,14 @@ El panel privado esta en:
 
 La URL no aparece en la pagina publica y ademas requiere login con `ADMIN_USER` y `ADMIN_PASSWORD`. La sesion se mantiene activa con una cookie HTTP-only.
 
+Desde el panel se puede:
+
+- Buscar clientes por nombre, cedula o telefono.
+- Filtrar solicitudes por status: pendiente, aprobado o rechazado.
+- Abrir el detalle de cada cliente.
+- Cambiar manualmente el status del financiamiento.
+- Ver la foto de cedula asociada a la solicitud.
+
 ## Operacion
 
 Como se guardan datos personales y fotos de cedula, usa HTTPS, contrasenas fuertes, backups de PostgreSQL y acceso limitado al servidor.

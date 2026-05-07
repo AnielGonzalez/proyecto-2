@@ -120,6 +120,7 @@ async function initDatabase() {
       cedula TEXT NOT NULL,
       phone TEXT NOT NULL,
       initial_amount NUMERIC(12, 2) NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pendiente',
       job_name TEXT,
       province TEXT,
       address TEXT
@@ -138,6 +139,30 @@ async function initDatabase() {
 
   await pool.query(`
     CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications (created_at DESC);
+  `);
+
+  await pool.query(`
+    ALTER TABLE applications
+    ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pendiente';
+  `);
+
+  await pool.query(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'applications_status_check'
+      ) THEN
+        ALTER TABLE applications
+        ADD CONSTRAINT applications_status_check
+        CHECK (status IN ('pendiente', 'aprobado', 'rechazado'));
+      END IF;
+    END $$;
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_applications_status ON applications (status);
   `);
 
   await pool.query(`
@@ -339,7 +364,25 @@ async function handleAdminApplications(req, res) {
     return;
   }
 
-  const result = await pool.query(`
+  const { searchParams } = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  const search = (searchParams.get("search") || "").trim();
+  const status = (searchParams.get("status") || "").trim();
+  const values = [];
+  const where = [];
+
+  if (search) {
+    values.push(`%${search}%`);
+    where.push(`(a.full_name ILIKE $${values.length} OR a.cedula ILIKE $${values.length} OR a.phone ILIKE $${values.length})`);
+  }
+
+  if (status && ["pendiente", "aprobado", "rechazado"].includes(status)) {
+    values.push(status);
+    where.push(`a.status = $${values.length}`);
+  }
+
+  const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const result = await pool.query(
+    `
     SELECT
       a.id,
       a.created_at,
@@ -347,13 +390,17 @@ async function handleAdminApplications(req, res) {
       a.cedula,
       a.phone,
       a.initial_amount,
+      a.status,
       a.province,
       EXISTS (
         SELECT 1 FROM cedula_photos p WHERE p.application_id = a.id
       ) AS has_photo
     FROM applications a
+    ${whereClause}
     ORDER BY a.created_at DESC
-  `);
+  `,
+    values
+  );
 
   sendJson(
     res,
@@ -365,6 +412,7 @@ async function handleAdminApplications(req, res) {
       cedula: row.cedula,
       phone: row.phone,
       initialAmount: row.initial_amount,
+      status: row.status,
       province: row.province,
       hasPhoto: row.has_photo
     }))
@@ -385,6 +433,7 @@ async function handleAdminApplicationDetail(req, res, id) {
         a.cedula,
         a.phone,
         a.initial_amount,
+        a.status,
         a.job_name,
         a.province,
         a.address,
@@ -412,6 +461,7 @@ async function handleAdminApplicationDetail(req, res, id) {
     cedula: row.cedula,
     phone: row.phone,
     initialAmount: row.initial_amount,
+    status: row.status,
     jobName: row.job_name,
     province: row.province,
     address: row.address,
@@ -424,6 +474,35 @@ async function handleAdminApplicationDetail(req, res, id) {
         }
       : null
   });
+}
+
+async function handleAdminApplicationStatus(req, res, id) {
+  if (!requireAdmin(req, res)) {
+    return;
+  }
+
+  const body = await readJson(req);
+  const status = String(body.status || "").trim();
+
+  if (!["pendiente", "aprobado", "rechazado"].includes(status)) {
+    sendJson(res, 400, { error: "Status invalido." });
+    return;
+  }
+
+  const result = await pool.query(
+    `UPDATE applications
+     SET status = $1
+     WHERE id = $2
+     RETURNING id, status`,
+    [status, id]
+  );
+
+  if (!result.rows.length) {
+    sendJson(res, 404, { error: "Solicitud no encontrada." });
+    return;
+  }
+
+  sendJson(res, 200, { id: result.rows[0].id, status: result.rows[0].status });
 }
 
 async function handleAdminApplicationPhoto(req, res, id) {
@@ -475,6 +554,11 @@ function routeAdminApplication(req, res, pathname) {
   const detailMatch = pathname.match(/^\/api\/admin\/applications\/([0-9a-f-]{36})$/i);
   if (detailMatch && req.method === "GET") {
     return handleAdminApplicationDetail(req, res, detailMatch[1]);
+  }
+
+  const statusMatch = pathname.match(/^\/api\/admin\/applications\/([0-9a-f-]{36})\/status$/i);
+  if (statusMatch && req.method === "PATCH") {
+    return handleAdminApplicationStatus(req, res, statusMatch[1]);
   }
 
   const photoMatch = pathname.match(/^\/api\/admin\/applications\/([0-9a-f-]{36})\/photo$/i);

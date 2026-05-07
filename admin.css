@@ -32,9 +32,9 @@ select {
 }
 
 .admin-shell {
-  width: min(1180px, calc(100% - 28px));
+  width: min(1360px, calc(100% - 28px));
   margin: 0 auto;
-  padding: 28px 0;
+  padding: 20px 0;
 }
 
 .login-card {
@@ -136,16 +136,17 @@ output {
   justify-content: space-between;
   align-items: center;
   gap: 18px;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .panel-header h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  line-height: 1.05;
 }
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 0.8fr);
   gap: 18px;
   align-items: start;
 }
@@ -160,7 +161,7 @@ output {
 
 .table-toolbar {
   min-height: 58px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -187,11 +188,11 @@ output {
 }
 
 .search-box input {
-  width: min(280px, 56vw);
+  width: min(260px, 56vw);
 }
 
 .status-filter select {
-  min-width: 150px;
+  min-width: 140px;
 }
 
 .table-wrap {
@@ -201,22 +202,57 @@ output {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 820px;
+  min-width: 760px;
+  table-layout: fixed;
 }
 
 th,
 td {
-  padding: 13px 14px;
+  padding: 12px 10px;
   border-bottom: 1px solid #eeeeee;
   text-align: left;
   vertical-align: top;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 th {
   color: var(--muted);
   font-size: 0.78rem;
   text-transform: uppercase;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 18%;
+}
+
+th:nth-child(2),
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3) {
+  width: 14%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 14%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 16%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 12%;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+  width: 12%;
 }
 
 tbody tr {
